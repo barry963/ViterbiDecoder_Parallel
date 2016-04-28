@@ -31,6 +31,7 @@ module sync_mem(clk, wr_data, wr_adr, wr_en, rd_adr, rd_en, rd_data);
     input clk;
     input [DATA_WIDTH - 1:0] wr_data;
     input [ADDRESS_WIDTH - 1:0] wr_adr;
+	
     input [ADDRESS_WIDTH - 1:0] rd_adr;
     input wr_en;
     input rd_en; 
@@ -54,9 +55,7 @@ module sync_mem(clk, wr_data, wr_adr, wr_en, rd_adr, rd_en, rd_data);
 			mem[0]<=1;
     end
 `else
-    reg [DATA_WIDTH - 1:0] mem0[63:0];
-	reg [DATA_WIDTH - 1:0] mem1[63:0];
-	reg [DATA_WIDTH - 1:0] mem2[63:0];
+    reg [DATA_WIDTH - 1:0] mem0[95:0];
     //integer temp;
     //initial 
     //begin
@@ -70,36 +69,14 @@ module sync_mem(clk, wr_data, wr_adr, wr_en, rd_adr, rd_en, rd_data);
     begin  
     	if (rd_en)
 			begin
-				if(rd_adr[7:6]==0)
-					begin
-						rd_data<=mem0[rd_adr[5:0]];
-					end
-				if(rd_adr[7:6]==1)
-					begin
-						rd_data<=mem1[rd_adr[5:0]];
-					end
-				if(rd_adr[7:6]==2)
-					begin
-						rd_data<=mem2[rd_adr[5:0]];
-					end
+				rd_data<=mem0[rd_adr];
 			end
     	else 
 			rd_data<='bx;
 			
 	    if(wr_en)
 			begin
-			if(wr_adr[7:6]==0)
-				begin
-					mem0[wr_adr[5:0]]<=wr_data;
-				end
-			if(wr_adr[7:6]==1)
-				begin
-					mem1[wr_adr[5:0]]<=wr_data;
-				end
-			if(wr_adr[7:6]==2)
-				begin
-					mem2[wr_adr[5:0]]<=wr_data;
-				end			
+				mem0[wr_adr]<=wr_data;	
 			end
     end
 `endif

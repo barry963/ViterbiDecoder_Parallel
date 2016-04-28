@@ -20,46 +20,54 @@
 module pe
 (
 	mclk, 
-	rst, 
+	rst,
+	rst_tf,
 	valid, 
-	slice, 
-	shift_cnt, 
-	adr0_shift, 
-	adr1_shift, 
 	symbol0, 
 	symbol1, 
 	pattern, 
 	in_sm0, 
-	in_sm1, 
+	in_sm1,
+	in_tf0, 
+	in_tf1,	
 	out_sm0, 
 	out_sm1, 
+	out_tf0, 
+	out_tf1,
+	rd_tf0_output, 
+	rd_tf1_output,		
 	dec0, 
 	dec1
 );
 parameter PE_ID=0;
 input mclk;
-input rst, valid;
-input[`U-1:0] slice;
-input[`V-1:0] shift_cnt;      ///////// 
-input[`U-1:0] adr0_shift, adr1_shift;             /////////////////////////////
+input rst, rst_tf, valid;
 input[`Bit_Width-1:0] symbol0, symbol1;
 input[`SYMBOLS_NUM-1:0] pattern;           //////////////////////////////////////////////
 input[`SM_Width-1:0] in_sm0, in_sm1;    //////////////////////////////////////////////
+input[`W+`V+`U-1:0] in_tf0, in_tf1;
 output[`SM_Width-1:0] out_sm0, out_sm1;   ////////////////////////////////////////////////
+output[`W+`V+`U-1:0] out_tf0, out_tf1;
+output[`W+`V+`U-1:0] rd_tf0_output, rd_tf1_output;
 output[`V-1:0] dec0, dec1;              //////////////////////////////////////////////
 reg[`V-1:0] dec0, dec1;                 //////////////////////////////////////////////
 
 wire[`W-1:0] pe_id = PE_ID;
 wire[`V-1:0] wire_dec0, wire_dec1;
 wire[`SM_Width-1:0] wr_sm0, wr_sm1;
-butfly2 butfly2_0(.old_sm0(in_sm0), .old_sm1(in_sm1), .state_cluster({slice,pe_id}), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .new_sm0(wr_sm0), .new_sm1(wr_sm1), .dec0(wire_dec0), .dec1(wire_dec1));
-smu smu_i
+wire[`W+`V+`U-1:0] wr_tf0, wr_tf1;
+butfly2 butfly2_0(.old_sm0(in_sm0), .old_sm1(in_sm1), .old_tf0(in_tf0), .old_tf1(in_tf1),.state_cluster(pe_id), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .new_sm0(wr_sm0), .new_sm1(wr_sm1), .new_tf0(wr_tf0), .new_tf1(wr_tf1),.dec0(wire_dec0), .dec1(wire_dec1));
+smu #(PE_ID) smu_i
 (
 	.mclk(mclk), 
 	.rst(rst), 
-	.valid(valid), 
-	.shift_cnt(shift_cnt), 
-	.adr0_shift(adr0_shift), .adr1_shift(adr1_shift), .wr_sm0(wr_sm0), .wr_sm1(wr_sm1), .rd_sm0(out_sm0), .rd_sm1(out_sm1)
+	.rst_tf(rst_tf),
+	.valid(valid),  
+	.wr_sm0(wr_sm0), .wr_sm1(wr_sm1), 
+	.wr_tf0(wr_tf0), .wr_tf1(wr_tf1),
+	.rd_sm0(out_sm0), .rd_sm1(out_sm1),
+	.rd_tf0(out_tf0), .rd_tf1(out_tf1),
+	.rd_tf0_output(rd_tf0_output), .rd_tf1_output(rd_tf1_output)	
 );
 
 always @(posedge mclk or posedge rst)

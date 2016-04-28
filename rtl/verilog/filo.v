@@ -19,9 +19,9 @@
 
 // the number of stages of one traceback output. It should be pow of two. The stage 
 // is the stage of encode lattice of radix r.
-`define OUT_STAGE_RADIX 5 
+`define OUT_STAGE_RADIX 6 
 // 2^OUT_STAGE_RADIX 
-`define OUT_STAGE       32
+`define OUT_STAGE       64
 
 module filo
 (
@@ -39,6 +39,7 @@ reg valid_out;
 reg filo_out;
 reg[`V-1:0] regfile[`OUT_STAGE-1:0];
 reg[`OUT_STAGE_RADIX-1:0] index;
+reg[`OUT_STAGE_RADIX-1:0] output_index;
 reg[`V-1:0] index_bit;		///////////////////////////////////////////////////////
 reg push_or_pop;
 wire[`V-1:0] regbyte;
@@ -47,78 +48,79 @@ wire[`OUT_STAGE_RADIX-1:0]  dec_index;
 integer i;
 
 assign inc_index=index+1;
-assign dec_index=index-1;
-assign regbyte=regfile[index];
+assign dec_index=output_index-1;
+assign regbyte=regfile[output_index];
 always @(posedge clk or posedge rst)
 begin
     if(rst)
-    begin
-        for(i=0;i<`OUT_STAGE;i=i+1)
-        begin
-            regfile[i]<=0;
-        end
-        filo_out<=0;
-        index<=0;
-        index_bit<=`V'b1;							///////////////////////////////////////////////
-        valid_out<=0;
-        push_or_pop<=0;         //push
-    end
+		begin
+			for(i=0;i<`OUT_STAGE;i=i+1)
+				begin
+					regfile[i]<=0;
+				end
+			filo_out<=0;
+			index<=0;
+			output_index<=0;
+			index_bit<=`V'b1;		
+			valid_out<=0;
+			push_or_pop<=0;         //push
+		end
     else
-    begin
-    	valid_out<=push_or_pop;
-        // push data into the register file 
-        if (push_or_pop == 0)
-        begin
-            if(en_filo_in)
-            begin
-                regfile[index]<=filo_in;
-                if(inc_index==`OUT_STAGE_RADIX'b00000)		//////////////////////////////////////////////
-                begin
-                    index<=`OUT_STAGE_RADIX'b11111;		//////////////////////////////////////////////
-                    push_or_pop<=1;
-                end
-                else
-                begin
-                    index<=inc_index;
-                    push_or_pop<=0;
-                end
-            end
-        end
-        else 		//pop data from the register file 
-        if (push_or_pop == 1)
-        begin 
-            if(en_filo_out)
-            begin
-                case(index_bit)
-		///////////////////////////////////////////////
-		`V'd1: filo_out<=regbyte[0];
-	
-                //    `V'b001:file_out<=regbyte[0];
-                //  `V'd010: file_out<=regbyte[1];
-                //  `V'd100: file_out<=regbyte[2];
-                    default:filo_out<=0;
-                endcase
-		index_bit<=`V'b1;	
-                if(index_bit==`V'b1)			/////////////////////////////////////////////////////
-                begin
-                    if(dec_index==`OUT_STAGE_RADIX'b11111)
-                    begin
-                        index<=0;
-                        push_or_pop<=0;
-                    end
-                    else
-                    begin
-                        index<=dec_index;
-                        push_or_pop<=1;
-                    end
-                end
-                else
-                begin
-                    index<=index;
-                    push_or_pop<=push_or_pop;
-                end
-            end
-        end
-    end    
+		begin
+			valid_out<=push_or_pop;
+			// push data into the register file 
+
+			if(en_filo_in)
+			begin
+				regfile[index]<=filo_in;
+				index<=inc_index;
+				if(inc_index[4:0]==5'b00000)		
+					begin
+						push_or_pop<=1;
+						if(push_or_pop==0)
+						begin
+							output_index<=index;
+						end
+					end
+				// else
+					// begin
+						// index<=inc_index;
+						// //push_or_pop<=0;
+					// end
+			end
+			
+			//pop data from the register file 
+			if (push_or_pop == 1)
+			begin 
+				if(en_filo_out)
+				begin
+					case(index_bit)
+					`V'd1: filo_out<=regbyte[0];
+		
+					//    `V'b001:file_out<=regbyte[0];
+					//  `V'd010: file_out<=regbyte[1];
+					//  `V'd100: file_out<=regbyte[2];
+						default:filo_out<=0;
+					endcase
+					index_bit<=`V'b1;	
+					if(index_bit==`V'b1)
+						begin
+							// if(dec_index[4:0]==5'b00000)
+								// begin
+									// output_index<=0;
+								// end
+							// else
+								begin
+									output_index<=dec_index;
+								end
+						end
+					else
+						begin
+							index<=index;
+							push_or_pop<=push_or_pop;
+						end
+				end
+			end
+		end    
 end
 endmodule

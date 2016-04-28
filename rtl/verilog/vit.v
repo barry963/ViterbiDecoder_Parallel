@@ -25,40 +25,73 @@ module vit
     symbol0, 
     symbol1, 
     pattern, 
-    dec0, 
-    dec1, 
-    dec2, 
-    dec3, 
-    dec4, 
-    dec5, 
-    dec6, 
-    dec7, 
-    dec8, 
-    dec9, 
-    dec10, 
-    dec11, 
-    dec12, 
-    dec13, 
-    dec14, 
-    dec15, 
-    dec16, 
-    dec17, 
-    dec18, 
-    dec19, 
-    dec20, 
-    dec21, 
-    dec22, 
-    dec23, 
-    dec24, 
-    dec25, 
-    dec26, 
-    dec27, 
-    dec28, 
-    dec29, 
-    dec30, 
-    dec31, 
-	sm_list,
-	slice_outside,
+    // dec0, 
+    // dec1, 
+    // dec2, 
+    // dec3, 
+    // dec4, 
+    // dec5, 
+    // dec6, 
+    // dec7, 
+    // dec8, 
+    // dec9, 
+    // dec10, 
+    // dec11, 
+    // dec12, 
+    // dec13, 
+    // dec14, 
+    // dec15, 
+    // dec16, 
+    // dec17, 
+    // dec18, 
+    // dec19, 
+    // dec20, 
+    // dec21, 
+    // dec22, 
+    // dec23, 
+    // dec24, 
+    // dec25, 
+    // dec26, 
+    // dec27, 
+    // dec28, 
+    // dec29, 
+    // dec30, 
+    // dec31, 
+    // dec32, 
+    // dec33, 
+    // dec34, 
+    // dec35, 
+    // dec36, 
+    // dec37, 
+    // dec38, 
+    // dec39, 
+    // dec40, 
+    // dec41, 
+    // dec42, 
+    // dec43, 
+    // dec44, 
+    // dec45, 
+    // dec46, 
+    // dec47, 
+    // dec48, 
+    // dec49, 
+    // dec50, 
+    // dec51, 
+    // dec52, 
+    // dec53, 
+    // dec54, 
+    // dec55, 
+    // dec56, 
+    // dec57, 
+    // dec58, 
+    // dec59, 
+    // dec60, 
+    // dec61, 
+    // dec62, 
+    // dec63,
+	dec_list,
+	dec_start_state,
+	//sm_list,
     // sm0, 
     // sm1, 
     // sm2, 
@@ -96,11 +129,14 @@ module vit
 input mclk, rst, valid;
 input[`Bit_Width-1:0] symbol0, symbol1;
 input[`SYMBOLS_NUM-1:0] pattern;
-output[`V-1:0] dec0, dec1, dec2, dec3, dec4, dec5, dec6, dec7, dec8, dec9, dec10, dec11, dec12, dec13, dec14, dec15, dec16, dec17, dec18, dec19, dec20, dec21, dec22, dec23, dec24, dec25, dec26, dec27, dec28, dec29, dec30, dec31;
+// output[`V-1:0] dec0, dec1, dec2, dec3, dec4, dec5, dec6, dec7, dec8, dec9, dec10, dec11, dec12, dec13, dec14, dec15, dec16, dec17, dec18, dec19, dec20, dec21, dec22, dec23, dec24, dec25, dec26, dec27, dec28, dec29, dec30, dec31,dec32,dec33,dec34,dec35,dec36,dec37,dec38,dec39,dec40,dec41,dec42,dec43,dec44,dec45,dec46,dec47,dec48,dec49,dec50,dec51,dec52,dec53,dec54,dec55,dec56,dec57,dec58,dec59,dec60,dec61,dec62,dec63;
+
 //output[`SM_Width-1:0] sm0, sm1, sm2, sm3, sm4, sm5, sm6, sm7, sm8, sm9, sm10, sm11, sm12, sm13, sm14, sm15, sm16, sm17, sm18, sm19, sm20, sm21, sm22, sm23, sm24, sm25, sm26, sm27, sm28, sm29, sm30, sm31;
-output[`SM_Width*32-1:0] sm_list;
-output[`U-1:0] slice_outside;
+wire[`SM_Width*64-1:0] sm_list;
+output [63:0] dec_list;
+output [`W+`V+`U-1:0] dec_start_state;
 output valid_decs;
+reg valid_decs;
 
 wire[`V-1:0] pe0_dec0, pe0_dec1;
 wire[`V-1:0] pe1_dec0, pe1_dec1;
@@ -119,12 +155,22 @@ wire[`V-1:0] pe13_dec0, pe13_dec1;
 wire[`V-1:0] pe14_dec0, pe14_dec1;
 wire[`V-1:0] pe15_dec0, pe15_dec1;
 
-wire valid_slice;
-wire[`U-1:0] slice;					// u canot be less than one
-wire[`Bit_Width-1:0] reg_symbol0, reg_symbol1;
-wire[`SYMBOLS_NUM-1:0] reg_pattern;           
-wire[`V-1:0] shift_cnt;       
-wire[`U-1:0] adr0_shift, adr1_shift;            
+wire[`V-1:0] pe16_dec0, pe16_dec1;
+wire[`V-1:0] pe17_dec0, pe17_dec1;
+wire[`V-1:0] pe18_dec0, pe18_dec1;
+wire[`V-1:0] pe19_dec0, pe19_dec1;
+wire[`V-1:0] pe20_dec0, pe20_dec1;
+wire[`V-1:0] pe21_dec0, pe21_dec1;
+wire[`V-1:0] pe22_dec0, pe22_dec1;
+wire[`V-1:0] pe23_dec0, pe23_dec1;
+wire[`V-1:0] pe24_dec0, pe24_dec1;
+wire[`V-1:0] pe25_dec0, pe25_dec1;
+wire[`V-1:0] pe26_dec0, pe26_dec1;
+wire[`V-1:0] pe27_dec0, pe27_dec1;
+wire[`V-1:0] pe28_dec0, pe28_dec1;
+wire[`V-1:0] pe29_dec0, pe29_dec1;
+wire[`V-1:0] pe30_dec0, pe30_dec1;
+wire[`V-1:0] pe31_dec0, pe31_dec1;                    
 
 wire[`SM_Width-1:0] pe0_in_sm0, pe0_in_sm1, pe0_out_sm0, pe0_out_sm1;  
 wire[`SM_Width-1:0] pe1_in_sm0, pe1_in_sm1, pe1_out_sm0, pe1_out_sm1;  
@@ -142,38 +188,123 @@ wire[`SM_Width-1:0] pe12_in_sm0, pe12_in_sm1, pe12_out_sm0, pe12_out_sm1;
 wire[`SM_Width-1:0] pe13_in_sm0, pe13_in_sm1, pe13_out_sm0, pe13_out_sm1;  
 wire[`SM_Width-1:0] pe14_in_sm0, pe14_in_sm1, pe14_out_sm0, pe14_out_sm1;  
 wire[`SM_Width-1:0] pe15_in_sm0, pe15_in_sm1, pe15_out_sm0, pe15_out_sm1;  
-assign dec0=pe0_dec0;	 
-assign dec1=pe0_dec1;	 
-assign dec2=pe1_dec0;	 
-assign dec3=pe1_dec1;	 
-assign dec4=pe2_dec0;	 
-assign dec5=pe2_dec1;	 
-assign dec6=pe3_dec0;	 
-assign dec7=pe3_dec1;	 
-assign dec8=pe4_dec0;	 
-assign dec9=pe4_dec1;	 
-assign dec10=pe5_dec0;	 
-assign dec11=pe5_dec1;	 
-assign dec12=pe6_dec0;	 
-assign dec13=pe6_dec1;	 
-assign dec14=pe7_dec0;	 
-assign dec15=pe7_dec1;	 
-assign dec16=pe8_dec0;	 
-assign dec17=pe8_dec1;	 
-assign dec18=pe9_dec0;	 
-assign dec19=pe9_dec1;	 
-assign dec20=pe10_dec0;	 
-assign dec21=pe10_dec1;	 
-assign dec22=pe11_dec0;	 
-assign dec23=pe11_dec1;	 
-assign dec24=pe12_dec0;	 
-assign dec25=pe12_dec1;	 
-assign dec26=pe13_dec0;	 
-assign dec27=pe13_dec1;	 
-assign dec28=pe14_dec0;	 
-assign dec29=pe14_dec1;	 
-assign dec30=pe15_dec0;	 
-assign dec31=pe15_dec1;	 
+
+wire[`SM_Width-1:0] pe16_in_sm0, pe16_in_sm1, pe16_out_sm0, pe16_out_sm1;
+wire[`SM_Width-1:0] pe17_in_sm0, pe17_in_sm1, pe17_out_sm0, pe17_out_sm1;
+wire[`SM_Width-1:0] pe18_in_sm0, pe18_in_sm1, pe18_out_sm0, pe18_out_sm1;
+wire[`SM_Width-1:0] pe19_in_sm0, pe19_in_sm1, pe19_out_sm0, pe19_out_sm1;
+wire[`SM_Width-1:0] pe20_in_sm0, pe20_in_sm1, pe20_out_sm0, pe20_out_sm1;
+wire[`SM_Width-1:0] pe21_in_sm0, pe21_in_sm1, pe21_out_sm0, pe21_out_sm1;
+wire[`SM_Width-1:0] pe22_in_sm0, pe22_in_sm1, pe22_out_sm0, pe22_out_sm1;
+wire[`SM_Width-1:0] pe23_in_sm0, pe23_in_sm1, pe23_out_sm0, pe23_out_sm1;
+wire[`SM_Width-1:0] pe24_in_sm0, pe24_in_sm1, pe24_out_sm0, pe24_out_sm1;
+wire[`SM_Width-1:0] pe25_in_sm0, pe25_in_sm1, pe25_out_sm0, pe25_out_sm1;
+wire[`SM_Width-1:0] pe26_in_sm0, pe26_in_sm1, pe26_out_sm0, pe26_out_sm1;
+wire[`SM_Width-1:0] pe27_in_sm0, pe27_in_sm1, pe27_out_sm0, pe27_out_sm1;
+wire[`SM_Width-1:0] pe28_in_sm0, pe28_in_sm1, pe28_out_sm0, pe28_out_sm1;
+wire[`SM_Width-1:0] pe29_in_sm0, pe29_in_sm1, pe29_out_sm0, pe29_out_sm1;
+wire[`SM_Width-1:0] pe30_in_sm0, pe30_in_sm1, pe30_out_sm0, pe30_out_sm1;
+wire[`SM_Width-1:0] pe31_in_sm0, pe31_in_sm1, pe31_out_sm0, pe31_out_sm1;
+
+wire[`W+`V+`U-1:0] pe0_in_tf0, pe0_in_tf1, pe0_out_tf0, pe0_out_tf1, pe0_output_tf0, pe0_output_tf1;
+wire[`W+`V+`U-1:0] pe1_in_tf0, pe1_in_tf1, pe1_out_tf0, pe1_out_tf1, pe1_output_tf0, pe1_output_tf1;
+wire[`W+`V+`U-1:0] pe2_in_tf0, pe2_in_tf1, pe2_out_tf0, pe2_out_tf1, pe2_output_tf0, pe2_output_tf1;
+wire[`W+`V+`U-1:0] pe3_in_tf0, pe3_in_tf1, pe3_out_tf0, pe3_out_tf1, pe3_output_tf0, pe3_output_tf1;
+wire[`W+`V+`U-1:0] pe4_in_tf0, pe4_in_tf1, pe4_out_tf0, pe4_out_tf1, pe4_output_tf0, pe4_output_tf1;
+wire[`W+`V+`U-1:0] pe5_in_tf0, pe5_in_tf1, pe5_out_tf0, pe5_out_tf1, pe5_output_tf0, pe5_output_tf1;
+wire[`W+`V+`U-1:0] pe6_in_tf0, pe6_in_tf1, pe6_out_tf0, pe6_out_tf1, pe6_output_tf0, pe6_output_tf1;
+wire[`W+`V+`U-1:0] pe7_in_tf0, pe7_in_tf1, pe7_out_tf0, pe7_out_tf1, pe7_output_tf0, pe7_output_tf1;
+wire[`W+`V+`U-1:0] pe8_in_tf0, pe8_in_tf1, pe8_out_tf0, pe8_out_tf1, pe8_output_tf0, pe8_output_tf1;
+wire[`W+`V+`U-1:0] pe9_in_tf0, pe9_in_tf1, pe9_out_tf0, pe9_out_tf1, pe9_output_tf0, pe9_output_tf1;
+wire[`W+`V+`U-1:0] pe10_in_tf0, pe10_in_tf1, pe10_out_tf0, pe10_out_tf1, pe10_output_tf0, pe10_output_tf1;
+wire[`W+`V+`U-1:0] pe11_in_tf0, pe11_in_tf1, pe11_out_tf0, pe11_out_tf1, pe11_output_tf0, pe11_output_tf1;
+wire[`W+`V+`U-1:0] pe12_in_tf0, pe12_in_tf1, pe12_out_tf0, pe12_out_tf1, pe12_output_tf0, pe12_output_tf1;
+wire[`W+`V+`U-1:0] pe13_in_tf0, pe13_in_tf1, pe13_out_tf0, pe13_out_tf1, pe13_output_tf0, pe13_output_tf1;
+wire[`W+`V+`U-1:0] pe14_in_tf0, pe14_in_tf1, pe14_out_tf0, pe14_out_tf1, pe14_output_tf0, pe14_output_tf1;
+wire[`W+`V+`U-1:0] pe15_in_tf0, pe15_in_tf1, pe15_out_tf0, pe15_out_tf1, pe15_output_tf0, pe15_output_tf1;
+wire[`W+`V+`U-1:0] pe16_in_tf0, pe16_in_tf1, pe16_out_tf0, pe16_out_tf1, pe16_output_tf0, pe16_output_tf1;
+wire[`W+`V+`U-1:0] pe17_in_tf0, pe17_in_tf1, pe17_out_tf0, pe17_out_tf1, pe17_output_tf0, pe17_output_tf1;
+wire[`W+`V+`U-1:0] pe18_in_tf0, pe18_in_tf1, pe18_out_tf0, pe18_out_tf1, pe18_output_tf0, pe18_output_tf1;
+wire[`W+`V+`U-1:0] pe19_in_tf0, pe19_in_tf1, pe19_out_tf0, pe19_out_tf1, pe19_output_tf0, pe19_output_tf1;
+wire[`W+`V+`U-1:0] pe20_in_tf0, pe20_in_tf1, pe20_out_tf0, pe20_out_tf1, pe20_output_tf0, pe20_output_tf1;
+wire[`W+`V+`U-1:0] pe21_in_tf0, pe21_in_tf1, pe21_out_tf0, pe21_out_tf1, pe21_output_tf0, pe21_output_tf1;
+wire[`W+`V+`U-1:0] pe22_in_tf0, pe22_in_tf1, pe22_out_tf0, pe22_out_tf1, pe22_output_tf0, pe22_output_tf1;
+wire[`W+`V+`U-1:0] pe23_in_tf0, pe23_in_tf1, pe23_out_tf0, pe23_out_tf1, pe23_output_tf0, pe23_output_tf1;
+wire[`W+`V+`U-1:0] pe24_in_tf0, pe24_in_tf1, pe24_out_tf0, pe24_out_tf1, pe24_output_tf0, pe24_output_tf1;
+wire[`W+`V+`U-1:0] pe25_in_tf0, pe25_in_tf1, pe25_out_tf0, pe25_out_tf1, pe25_output_tf0, pe25_output_tf1;
+wire[`W+`V+`U-1:0] pe26_in_tf0, pe26_in_tf1, pe26_out_tf0, pe26_out_tf1, pe26_output_tf0, pe26_output_tf1;
+wire[`W+`V+`U-1:0] pe27_in_tf0, pe27_in_tf1, pe27_out_tf0, pe27_out_tf1, pe27_output_tf0, pe27_output_tf1;
+wire[`W+`V+`U-1:0] pe28_in_tf0, pe28_in_tf1, pe28_out_tf0, pe28_out_tf1, pe28_output_tf0, pe28_output_tf1;
+wire[`W+`V+`U-1:0] pe29_in_tf0, pe29_in_tf1, pe29_out_tf0, pe29_out_tf1, pe29_output_tf0, pe29_output_tf1;
+wire[`W+`V+`U-1:0] pe30_in_tf0, pe30_in_tf1, pe30_out_tf0, pe30_out_tf1, pe30_output_tf0, pe30_output_tf1;
+wire[`W+`V+`U-1:0] pe31_in_tf0, pe31_in_tf1, pe31_out_tf0, pe31_out_tf1, pe31_output_tf0, pe31_output_tf1;
+
+// assign dec0=pe0_dec0;	 
+// assign dec1=pe1_dec0;	 
+// assign dec2=pe2_dec0;	 
+// assign dec3=pe3_dec0;	 
+// assign dec4=pe4_dec0;	 
+// assign dec5=pe5_dec0;	 
+// assign dec6=pe6_dec0;	 
+// assign dec7=pe7_dec0;	 
+// assign dec8=pe8_dec0;	 
+// assign dec9=pe9_dec0;	 
+// assign dec10=pe10_dec0;	 
+// assign dec11=pe11_dec0;	 
+// assign dec12=pe12_dec0;	 
+// assign dec13=pe13_dec0;	 
+// assign dec14=pe14_dec0;	 
+// assign dec15=pe15_dec0;	 
+// assign dec16=pe16_dec0;	 
+// assign dec17=pe17_dec0;	 
+// assign dec18=pe18_dec0;	 
+// assign dec19=pe19_dec0;	 
+// assign dec20=pe20_dec0;	 
+// assign dec21=pe21_dec0;	 
+// assign dec22=pe22_dec0;	 
+// assign dec23=pe23_dec0;	 
+// assign dec24=pe24_dec0;	 
+// assign dec25=pe25_dec0;	 
+// assign dec26=pe26_dec0;	 
+// assign dec27=pe27_dec0;	 
+// assign dec28=pe28_dec0;	 
+// assign dec29=pe29_dec0;	 
+// assign dec30=pe30_dec0;	 
+// assign dec31=pe31_dec0;
+
+// assign dec32= pe0_dec1; 
+// assign dec33= pe1_dec1; 
+// assign dec34= pe2_dec1; 
+// assign dec35= pe3_dec1; 
+// assign dec36= pe4_dec1; 
+// assign dec37= pe5_dec1; 
+// assign dec38= pe6_dec1; 
+// assign dec39= pe7_dec1; 
+// assign dec40= pe8_dec1; 
+// assign dec41= pe9_dec1; 
+// assign dec42= pe10_dec1; 
+// assign dec43= pe11_dec1; 
+// assign dec44= pe12_dec1; 
+// assign dec45= pe13_dec1; 
+// assign dec46= pe14_dec1; 
+// assign dec47= pe15_dec1; 
+// assign dec48= pe16_dec1; 
+// assign dec49= pe17_dec1; 
+// assign dec50= pe18_dec1; 
+// assign dec51= pe19_dec1; 
+// assign dec52= pe20_dec1; 
+// assign dec53= pe21_dec1; 
+// assign dec54= pe22_dec1; 
+// assign dec55= pe23_dec1; 
+// assign dec56= pe24_dec1; 
+// assign dec57= pe25_dec1; 
+// assign dec58= pe26_dec1; 
+// assign dec59= pe27_dec1; 
+// assign dec60= pe28_dec1; 
+// assign dec61= pe29_dec1; 
+// assign dec62= pe30_dec1; 
+// assign dec63= pe31_dec1;
+	 
 assign pe0_in_sm0=pe0_out_sm0;             
 assign pe0_in_sm1=pe1_out_sm0;             
 assign pe1_in_sm0=pe2_out_sm0;             
@@ -190,25 +321,264 @@ assign pe6_in_sm0=pe12_out_sm0;
 assign pe6_in_sm1=pe13_out_sm0;             
 assign pe7_in_sm0=pe14_out_sm0;             
 assign pe7_in_sm1=pe15_out_sm0;             
-assign pe8_in_sm0=pe0_out_sm1;             
-assign pe8_in_sm1=pe1_out_sm1;             
-assign pe9_in_sm0=pe2_out_sm1;             
-assign pe9_in_sm1=pe3_out_sm1;             
-assign pe10_in_sm0=pe4_out_sm1;             
-assign pe10_in_sm1=pe5_out_sm1;             
-assign pe11_in_sm0=pe6_out_sm1;             
-assign pe11_in_sm1=pe7_out_sm1;             
-assign pe12_in_sm0=pe8_out_sm1;             
-assign pe12_in_sm1=pe9_out_sm1;             
-assign pe13_in_sm0=pe10_out_sm1;             
-assign pe13_in_sm1=pe11_out_sm1;             
-assign pe14_in_sm0=pe12_out_sm1;             
-assign pe14_in_sm1=pe13_out_sm1;             
-assign pe15_in_sm0=pe14_out_sm1;             
-assign pe15_in_sm1=pe15_out_sm1;             
+assign pe8_in_sm0=pe16_out_sm0;             
+assign pe8_in_sm1=pe17_out_sm0;             
+assign pe9_in_sm0=pe18_out_sm0;             
+assign pe9_in_sm1=pe19_out_sm0;             
+assign pe10_in_sm0=pe20_out_sm0;             
+assign pe10_in_sm1=pe21_out_sm0;             
+assign pe11_in_sm0=pe22_out_sm0;             
+assign pe11_in_sm1=pe23_out_sm0;             
+assign pe12_in_sm0=pe24_out_sm0;             
+assign pe12_in_sm1=pe25_out_sm0;             
+assign pe13_in_sm0=pe26_out_sm0;             
+assign pe13_in_sm1=pe27_out_sm0;             
+assign pe14_in_sm0=pe28_out_sm0;             
+assign pe14_in_sm1=pe29_out_sm0;             
+assign pe15_in_sm0=pe30_out_sm0;             
+assign pe15_in_sm1=pe31_out_sm0;  
 
-assign sm_list={pe0_out_sm0,pe1_out_sm0,pe2_out_sm0,pe3_out_sm0,pe4_out_sm0,pe5_out_sm0,pe6_out_sm0,pe7_out_sm0,pe8_out_sm0,pe9_out_sm0,pe10_out_sm0,pe11_out_sm0,pe12_out_sm0,pe13_out_sm0,pe14_out_sm0,pe15_out_sm0,pe0_out_sm1,pe1_out_sm1,pe2_out_sm1,pe3_out_sm1,pe4_out_sm1,pe5_out_sm1,pe6_out_sm1,pe7_out_sm1,pe8_out_sm1,pe9_out_sm1,pe10_out_sm1,pe11_out_sm1,pe12_out_sm1,pe13_out_sm1,pe14_out_sm1,pe15_out_sm1};
-assign slice_outside=slice;
+assign pe16_in_sm0=pe0_out_sm1;             
+assign pe16_in_sm1=pe1_out_sm1;             
+assign pe17_in_sm0=pe2_out_sm1;             
+assign pe17_in_sm1=pe3_out_sm1;             
+assign pe18_in_sm0=pe4_out_sm1;             
+assign pe18_in_sm1=pe5_out_sm1;             
+assign pe19_in_sm0=pe6_out_sm1;             
+assign pe19_in_sm1=pe7_out_sm1;             
+assign pe20_in_sm0=pe8_out_sm1;             
+assign pe20_in_sm1=pe9_out_sm1;             
+assign pe21_in_sm0=pe10_out_sm1;             
+assign pe21_in_sm1=pe11_out_sm1;             
+assign pe22_in_sm0=pe12_out_sm1;             
+assign pe22_in_sm1=pe13_out_sm1;             
+assign pe23_in_sm0=pe14_out_sm1;             
+assign pe23_in_sm1=pe15_out_sm1;             
+assign pe24_in_sm0=pe16_out_sm1;             
+assign pe24_in_sm1=pe17_out_sm1;             
+assign pe25_in_sm0=pe18_out_sm1;             
+assign pe25_in_sm1=pe19_out_sm1;             
+assign pe26_in_sm0=pe20_out_sm1;             
+assign pe26_in_sm1=pe21_out_sm1;             
+assign pe27_in_sm0=pe22_out_sm1;             
+assign pe27_in_sm1=pe23_out_sm1;             
+assign pe28_in_sm0=pe24_out_sm1;             
+assign pe28_in_sm1=pe25_out_sm1;             
+assign pe29_in_sm0=pe26_out_sm1;             
+assign pe29_in_sm1=pe27_out_sm1;             
+assign pe30_in_sm0=pe28_out_sm1;             
+assign pe30_in_sm1=pe29_out_sm1;             
+assign pe31_in_sm0=pe30_out_sm1;             
+assign pe31_in_sm1=pe31_out_sm1;             
+
+
+
+assign pe0_in_tf0=pe0_out_tf0;             
+assign pe0_in_tf1=pe1_out_tf0;             
+assign pe1_in_tf0=pe2_out_tf0;             
+assign pe1_in_tf1=pe3_out_tf0;             
+assign pe2_in_tf0=pe4_out_tf0;             
+assign pe2_in_tf1=pe5_out_tf0;             
+assign pe3_in_tf0=pe6_out_tf0;             
+assign pe3_in_tf1=pe7_out_tf0;             
+assign pe4_in_tf0=pe8_out_tf0;             
+assign pe4_in_tf1=pe9_out_tf0;             
+assign pe5_in_tf0=pe10_out_tf0;             
+assign pe5_in_tf1=pe11_out_tf0;             
+assign pe6_in_tf0=pe12_out_tf0;             
+assign pe6_in_tf1=pe13_out_tf0;             
+assign pe7_in_tf0=pe14_out_tf0;             
+assign pe7_in_tf1=pe15_out_tf0;             
+assign pe8_in_tf0=pe16_out_tf0;             
+assign pe8_in_tf1=pe17_out_tf0;             
+assign pe9_in_tf0=pe18_out_tf0;             
+assign pe9_in_tf1=pe19_out_tf0;             
+assign pe10_in_tf0=pe20_out_tf0;             
+assign pe10_in_tf1=pe21_out_tf0;             
+assign pe11_in_tf0=pe22_out_tf0;             
+assign pe11_in_tf1=pe23_out_tf0;             
+assign pe12_in_tf0=pe24_out_tf0;             
+assign pe12_in_tf1=pe25_out_tf0;             
+assign pe13_in_tf0=pe26_out_tf0;             
+assign pe13_in_tf1=pe27_out_tf0;             
+assign pe14_in_tf0=pe28_out_tf0;             
+assign pe14_in_tf1=pe29_out_tf0;             
+assign pe15_in_tf0=pe30_out_tf0;             
+assign pe15_in_tf1=pe31_out_tf0;  
+
+assign pe16_in_tf0=pe0_out_tf1;             
+assign pe16_in_tf1=pe1_out_tf1;             
+assign pe17_in_tf0=pe2_out_tf1;             
+assign pe17_in_tf1=pe3_out_tf1;             
+assign pe18_in_tf0=pe4_out_tf1;             
+assign pe18_in_tf1=pe5_out_tf1;             
+assign pe19_in_tf0=pe6_out_tf1;             
+assign pe19_in_tf1=pe7_out_tf1;             
+assign pe20_in_tf0=pe8_out_tf1;             
+assign pe20_in_tf1=pe9_out_tf1;             
+assign pe21_in_tf0=pe10_out_tf1;             
+assign pe21_in_tf1=pe11_out_tf1;             
+assign pe22_in_tf0=pe12_out_tf1;             
+assign pe22_in_tf1=pe13_out_tf1;             
+assign pe23_in_tf0=pe14_out_tf1;             
+assign pe23_in_tf1=pe15_out_tf1;             
+assign pe24_in_tf0=pe16_out_tf1;             
+assign pe24_in_tf1=pe17_out_tf1;             
+assign pe25_in_tf0=pe18_out_tf1;             
+assign pe25_in_tf1=pe19_out_tf1;             
+assign pe26_in_tf0=pe20_out_tf1;             
+assign pe26_in_tf1=pe21_out_tf1;             
+assign pe27_in_tf0=pe22_out_tf1;             
+assign pe27_in_tf1=pe23_out_tf1;             
+assign pe28_in_tf0=pe24_out_tf1;             
+assign pe28_in_tf1=pe25_out_tf1;             
+assign pe29_in_tf0=pe26_out_tf1;             
+assign pe29_in_tf1=pe27_out_tf1;             
+assign pe30_in_tf0=pe28_out_tf1;             
+assign pe30_in_tf1=pe29_out_tf1;             
+assign pe31_in_tf0=pe30_out_tf1;             
+assign pe31_in_tf1=pe31_out_tf1;  
+
+
+assign sm_list={pe0_out_sm0,pe1_out_sm0,pe2_out_sm0,pe3_out_sm0,pe4_out_sm0,pe5_out_sm0,pe6_out_sm0,pe7_out_sm0,pe8_out_sm0,pe9_out_sm0,pe10_out_sm0,pe11_out_sm0,pe12_out_sm0,pe13_out_sm0,pe14_out_sm0,pe15_out_sm0,pe16_out_sm0,pe17_out_sm0,pe18_out_sm0,pe19_out_sm0,pe20_out_sm0,pe21_out_sm0,pe22_out_sm0,pe23_out_sm0,pe24_out_sm0,pe25_out_sm0,pe26_out_sm0,pe27_out_sm0,pe28_out_sm0,pe29_out_sm0,pe30_out_sm0,pe31_out_sm0,pe0_out_sm1,pe1_out_sm1,pe2_out_sm1,pe3_out_sm1,pe4_out_sm1,pe5_out_sm1,pe6_out_sm1,pe7_out_sm1,pe8_out_sm1,pe9_out_sm1,pe10_out_sm1,pe11_out_sm1,pe12_out_sm1,pe13_out_sm1,pe14_out_sm1,pe15_out_sm1,pe16_out_sm1,pe17_out_sm1,pe18_out_sm1,pe19_out_sm1,pe20_out_sm1,pe21_out_sm1,pe22_out_sm1,pe23_out_sm1,pe24_out_sm1,pe25_out_sm1,pe26_out_sm1,pe27_out_sm1,pe28_out_sm1,pe29_out_sm1,pe30_out_sm1,pe31_out_sm1};
+
+assign dec_list={pe0_dec0, pe1_dec0, pe2_dec0, pe3_dec0, pe4_dec0, pe5_dec0, pe6_dec0, pe7_dec0, pe8_dec0, pe9_dec0, pe10_dec0, pe11_dec0, pe12_dec0, pe13_dec0, pe14_dec0, pe15_dec0, pe16_dec0, pe17_dec0, pe18_dec0, pe19_dec0, pe20_dec0, pe21_dec0, pe22_dec0, pe23_dec0, pe24_dec0, pe25_dec0, pe26_dec0, pe27_dec0, pe28_dec0, pe29_dec0, pe30_dec0, pe31_dec0, pe0_dec1, pe1_dec1, pe2_dec1, pe3_dec1, pe4_dec1, pe5_dec1, pe6_dec1, pe7_dec1, pe8_dec1, pe9_dec1, pe10_dec1, pe11_dec1, pe12_dec1, pe13_dec1, pe14_dec1, pe15_dec1, pe16_dec1, pe17_dec1, pe18_dec1, pe19_dec1, pe20_dec1, pe21_dec1, pe22_dec1, pe23_dec1, pe24_dec1, pe25_dec1, pe26_dec1, pe27_dec1, pe28_dec1, pe29_dec1, pe30_dec1, pe31_dec1  
+};
+reg rst_tf;
+
+//assign rst_tf=valid?(counter==0):0;
+reg[4:0] counter;//0->32
+
+wire [`SM_Width-1:0]  min_sm_slice;
+wire [`W+`V+`U-1:0]  min_sm_index;
+reg selectmini_flag;
+SelectMiniPM selectminiPM
+(
+	.array(sm_list),
+	.slice(0),
+	.en_comp_in(selectmini_flag),
+	.indexG(min_sm_index),
+	.valueG(min_sm_slice)
+);
+reg [`W+`V+`U-1:0] dec_start_state;
+always @(posedge mclk or posedge rst)
+begin
+    if(rst)
+		begin
+			valid_decs<=0;
+			counter<=2;
+			rst_tf<=0;
+			selectmini_flag<=0;
+		end
+    else if(valid)
+		begin
+			valid_decs<=1;				
+			counter<=counter+1;
+			if(counter==0)
+				begin
+					//counter<=0;
+					rst_tf<=1;
+				end
+			// else if(counter==32)
+				// begin
+					// counter<=counter+1;
+					// store_tf<=1;					
+				// end
+			else
+				begin
+					//counter<=counter+1;
+					rst_tf<=0;
+				end
+
+			if(counter==1)
+				begin
+					selectmini_flag<=1;
+				end
+			else
+				begin
+					selectmini_flag<=0;
+				end
+		
+			if(selectmini_flag==1)
+			begin
+				case(min_sm_index)
+					6'd0: dec_start_state<=pe0_output_tf0;
+					6'd1: dec_start_state<=pe1_output_tf0;
+					6'd2: dec_start_state<=pe2_output_tf0;
+					6'd3: dec_start_state<=pe3_output_tf0;
+					6'd4: dec_start_state<=pe4_output_tf0;
+					6'd5: dec_start_state<=pe5_output_tf0;
+					6'd6: dec_start_state<=pe6_output_tf0;
+					6'd7: dec_start_state<=pe7_output_tf0;
+					6'd8: dec_start_state<=pe8_output_tf0;
+					6'd9: dec_start_state<=pe9_output_tf0;
+					6'd10: dec_start_state<=pe10_output_tf0;
+					6'd11: dec_start_state<=pe11_output_tf0;
+					6'd12: dec_start_state<=pe12_output_tf0;
+					6'd13: dec_start_state<=pe13_output_tf0;
+					6'd14: dec_start_state<=pe14_output_tf0;
+					6'd15: dec_start_state<=pe15_output_tf0;
+					6'd16: dec_start_state<=pe16_output_tf0;
+					6'd17: dec_start_state<=pe17_output_tf0;
+					6'd18: dec_start_state<=pe18_output_tf0;
+					6'd19: dec_start_state<=pe19_output_tf0;
+					6'd20: dec_start_state<=pe20_output_tf0;
+					6'd21: dec_start_state<=pe21_output_tf0;
+					6'd22: dec_start_state<=pe22_output_tf0;
+					6'd23: dec_start_state<=pe23_output_tf0;
+					6'd24: dec_start_state<=pe24_output_tf0;
+					6'd25: dec_start_state<=pe25_output_tf0;
+					6'd26: dec_start_state<=pe26_output_tf0;
+					6'd27: dec_start_state<=pe27_output_tf0;
+					6'd28: dec_start_state<=pe28_output_tf0;
+					6'd29: dec_start_state<=pe29_output_tf0;
+					6'd30: dec_start_state<=pe30_output_tf0;
+					6'd31: dec_start_state<=pe31_output_tf0;
+					6'd32: dec_start_state<=pe0_output_tf1;
+					6'd33: dec_start_state<=pe1_output_tf1;
+					6'd34: dec_start_state<=pe2_output_tf1;
+					6'd35: dec_start_state<=pe3_output_tf1;
+					6'd36: dec_start_state<=pe4_output_tf1;
+					6'd37: dec_start_state<=pe5_output_tf1;
+					6'd38: dec_start_state<=pe6_output_tf1;
+					6'd39: dec_start_state<=pe7_output_tf1;
+					6'd40: dec_start_state<=pe8_output_tf1;
+					6'd41: dec_start_state<=pe9_output_tf1;
+					6'd42: dec_start_state<=pe10_output_tf1;
+					6'd43: dec_start_state<=pe11_output_tf1;
+					6'd44: dec_start_state<=pe12_output_tf1;
+					6'd45: dec_start_state<=pe13_output_tf1;
+					6'd46: dec_start_state<=pe14_output_tf1;
+					6'd47: dec_start_state<=pe15_output_tf1;
+					6'd48: dec_start_state<=pe16_output_tf1;
+					6'd49: dec_start_state<=pe17_output_tf1;
+					6'd50: dec_start_state<=pe18_output_tf1;
+					6'd51: dec_start_state<=pe19_output_tf1;
+					6'd52: dec_start_state<=pe20_output_tf1;
+					6'd53: dec_start_state<=pe21_output_tf1;
+					6'd54: dec_start_state<=pe22_output_tf1;
+					6'd55: dec_start_state<=pe23_output_tf1;
+					6'd56: dec_start_state<=pe24_output_tf1;
+					6'd57: dec_start_state<=pe25_output_tf1;
+					6'd58: dec_start_state<=pe26_output_tf1;
+					6'd59: dec_start_state<=pe27_output_tf1;
+					6'd60: dec_start_state<=pe28_output_tf1;
+					6'd61: dec_start_state<=pe29_output_tf1;
+					6'd62: dec_start_state<=pe30_output_tf1;
+					6'd63: dec_start_state<=pe31_output_tf1;	
+				endcase
+			end			
+	
+		end
+	else
+		begin
+			valid_decs<=0;
+		end
+	
+end
+
+
+
 // assign sm0=pe0_out_sm0;             
 // assign sm1=pe1_out_sm0;             
 // assign sm2=pe2_out_sm0;             
@@ -242,41 +612,41 @@ assign slice_outside=slice;
 // assign sm30=pe14_out_sm1;             
 // assign sm31=pe15_out_sm1; 
 
-pe #(0) pe_0(.mclk(mclk), .rst(rst), .slice(slice), .valid(valid_slice), .shift_cnt(shift_cnt), .adr0_shift(adr0_shift), .adr1_shift(adr1_shift), .symbol0(reg_symbol0), .symbol1(reg_symbol1), .pattern(reg_pattern), .in_sm0(pe0_in_sm0), .in_sm1(pe0_in_sm1), .out_sm0(pe0_out_sm0), .out_sm1(pe0_out_sm1), .dec0(pe0_dec0), .dec1(pe0_dec1));
+pe #(0) pe_0(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe0_in_sm0), .in_sm1(pe0_in_sm1),.in_tf0(pe0_in_tf0), .in_tf1(pe0_in_tf1), .out_sm0(pe0_out_sm0), .out_sm1(pe0_out_sm1),.out_tf0(pe0_out_tf0), .out_tf1(pe0_out_tf1), .rd_tf0_output(pe0_output_tf0), .rd_tf1_output(pe0_output_tf1), .dec0(pe0_dec0), .dec1(pe0_dec1));
+pe #(1) pe_1(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe1_in_sm0), .in_sm1(pe1_in_sm1),.in_tf0(pe1_in_tf0), .in_tf1(pe1_in_tf1), .out_sm0(pe1_out_sm0), .out_sm1(pe1_out_sm1),.out_tf0(pe1_out_tf0), .out_tf1(pe1_out_tf1), .rd_tf0_output(pe1_output_tf0), .rd_tf1_output(pe1_output_tf1), .dec0(pe1_dec0), .dec1(pe1_dec1));
+pe #(2) pe_2(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe2_in_sm0), .in_sm1(pe2_in_sm1),.in_tf0(pe2_in_tf0), .in_tf1(pe2_in_tf1), .out_sm0(pe2_out_sm0), .out_sm1(pe2_out_sm1),.out_tf0(pe2_out_tf0), .out_tf1(pe2_out_tf1), .rd_tf0_output(pe2_output_tf0), .rd_tf1_output(pe2_output_tf1), .dec0(pe2_dec0), .dec1(pe2_dec1));
+pe #(3) pe_3(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe3_in_sm0), .in_sm1(pe3_in_sm1),.in_tf0(pe3_in_tf0), .in_tf1(pe3_in_tf1), .out_sm0(pe3_out_sm0), .out_sm1(pe3_out_sm1),.out_tf0(pe3_out_tf0), .out_tf1(pe3_out_tf1), .rd_tf0_output(pe3_output_tf0), .rd_tf1_output(pe3_output_tf1), .dec0(pe3_dec0), .dec1(pe3_dec1));
+pe #(4) pe_4(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe4_in_sm0), .in_sm1(pe4_in_sm1),.in_tf0(pe4_in_tf0), .in_tf1(pe4_in_tf1), .out_sm0(pe4_out_sm0), .out_sm1(pe4_out_sm1),.out_tf0(pe4_out_tf0), .out_tf1(pe4_out_tf1), .rd_tf0_output(pe4_output_tf0), .rd_tf1_output(pe4_output_tf1), .dec0(pe4_dec0), .dec1(pe4_dec1));
+pe #(5) pe_5(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe5_in_sm0), .in_sm1(pe5_in_sm1),.in_tf0(pe5_in_tf0), .in_tf1(pe5_in_tf1), .out_sm0(pe5_out_sm0), .out_sm1(pe5_out_sm1),.out_tf0(pe5_out_tf0), .out_tf1(pe5_out_tf1), .rd_tf0_output(pe5_output_tf0), .rd_tf1_output(pe5_output_tf1), .dec0(pe5_dec0), .dec1(pe5_dec1));
+pe #(6) pe_6(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe6_in_sm0), .in_sm1(pe6_in_sm1),.in_tf0(pe6_in_tf0), .in_tf1(pe6_in_tf1), .out_sm0(pe6_out_sm0), .out_sm1(pe6_out_sm1),.out_tf0(pe6_out_tf0), .out_tf1(pe6_out_tf1), .rd_tf0_output(pe6_output_tf0), .rd_tf1_output(pe6_output_tf1), .dec0(pe6_dec0), .dec1(pe6_dec1));
+pe #(7) pe_7(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe7_in_sm0), .in_sm1(pe7_in_sm1),.in_tf0(pe7_in_tf0), .in_tf1(pe7_in_tf1), .out_sm0(pe7_out_sm0), .out_sm1(pe7_out_sm1),.out_tf0(pe7_out_tf0), .out_tf1(pe7_out_tf1), .rd_tf0_output(pe7_output_tf0), .rd_tf1_output(pe7_output_tf1), .dec0(pe7_dec0), .dec1(pe7_dec1));
+pe #(8) pe_8(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe8_in_sm0), .in_sm1(pe8_in_sm1),.in_tf0(pe8_in_tf0), .in_tf1(pe8_in_tf1), .out_sm0(pe8_out_sm0), .out_sm1(pe8_out_sm1),.out_tf0(pe8_out_tf0), .out_tf1(pe8_out_tf1), .rd_tf0_output(pe8_output_tf0), .rd_tf1_output(pe8_output_tf1), .dec0(pe8_dec0), .dec1(pe8_dec1));
+pe #(9) pe_9(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe9_in_sm0), .in_sm1(pe9_in_sm1),.in_tf0(pe9_in_tf0), .in_tf1(pe9_in_tf1), .out_sm0(pe9_out_sm0), .out_sm1(pe9_out_sm1),.out_tf0(pe9_out_tf0), .out_tf1(pe9_out_tf1), .rd_tf0_output(pe9_output_tf0), .rd_tf1_output(pe9_output_tf1), .dec0(pe9_dec0), .dec1(pe9_dec1));
+pe #(10) pe_10(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe10_in_sm0), .in_sm1(pe10_in_sm1),.in_tf0(pe10_in_tf0), .in_tf1(pe10_in_tf1), .out_sm0(pe10_out_sm0), .out_sm1(pe10_out_sm1),.out_tf0(pe10_out_tf0), .out_tf1(pe10_out_tf1), .rd_tf0_output(pe10_output_tf0), .rd_tf1_output(pe10_output_tf1), .dec0(pe10_dec0), .dec1(pe10_dec1));
+pe #(11) pe_11(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe11_in_sm0), .in_sm1(pe11_in_sm1),.in_tf0(pe11_in_tf0), .in_tf1(pe11_in_tf1), .out_sm0(pe11_out_sm0), .out_sm1(pe11_out_sm1),.out_tf0(pe11_out_tf0), .out_tf1(pe11_out_tf1), .rd_tf0_output(pe11_output_tf0), .rd_tf1_output(pe11_output_tf1), .dec0(pe11_dec0), .dec1(pe11_dec1));
+pe #(12) pe_12(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe12_in_sm0), .in_sm1(pe12_in_sm1),.in_tf0(pe12_in_tf0), .in_tf1(pe12_in_tf1), .out_sm0(pe12_out_sm0), .out_sm1(pe12_out_sm1),.out_tf0(pe12_out_tf0), .out_tf1(pe12_out_tf1), .rd_tf0_output(pe12_output_tf0), .rd_tf1_output(pe12_output_tf1), .dec0(pe12_dec0), .dec1(pe12_dec1));
+pe #(13) pe_13(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe13_in_sm0), .in_sm1(pe13_in_sm1),.in_tf0(pe13_in_tf0), .in_tf1(pe13_in_tf1), .out_sm0(pe13_out_sm0), .out_sm1(pe13_out_sm1),.out_tf0(pe13_out_tf0), .out_tf1(pe13_out_tf1), .rd_tf0_output(pe13_output_tf0), .rd_tf1_output(pe13_output_tf1), .dec0(pe13_dec0), .dec1(pe13_dec1));
+pe #(14) pe_14(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe14_in_sm0), .in_sm1(pe14_in_sm1),.in_tf0(pe14_in_tf0), .in_tf1(pe14_in_tf1), .out_sm0(pe14_out_sm0), .out_sm1(pe14_out_sm1),.out_tf0(pe14_out_tf0), .out_tf1(pe14_out_tf1), .rd_tf0_output(pe14_output_tf0), .rd_tf1_output(pe14_output_tf1), .dec0(pe14_dec0), .dec1(pe14_dec1));
+pe #(15) pe_15(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe15_in_sm0), .in_sm1(pe15_in_sm1),.in_tf0(pe15_in_tf0), .in_tf1(pe15_in_tf1), .out_sm0(pe15_out_sm0), .out_sm1(pe15_out_sm1),.out_tf0(pe15_out_tf0), .out_tf1(pe15_out_tf1), .rd_tf0_output(pe15_output_tf0), .rd_tf1_output(pe15_output_tf1), .dec0(pe15_dec0), .dec1(pe15_dec1));
+pe #(16) pe_16(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe16_in_sm0), .in_sm1(pe16_in_sm1),.in_tf0(pe16_in_tf0), .in_tf1(pe16_in_tf1), .out_sm0(pe16_out_sm0), .out_sm1(pe16_out_sm1),.out_tf0(pe16_out_tf0), .out_tf1(pe16_out_tf1), .rd_tf0_output(pe16_output_tf0), .rd_tf1_output(pe16_output_tf1), .dec0(pe16_dec0), .dec1(pe16_dec1));
+pe #(17) pe_17(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe17_in_sm0), .in_sm1(pe17_in_sm1),.in_tf0(pe17_in_tf0), .in_tf1(pe17_in_tf1), .out_sm0(pe17_out_sm0), .out_sm1(pe17_out_sm1),.out_tf0(pe17_out_tf0), .out_tf1(pe17_out_tf1), .rd_tf0_output(pe17_output_tf0), .rd_tf1_output(pe17_output_tf1), .dec0(pe17_dec0), .dec1(pe17_dec1));
+pe #(18) pe_18(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe18_in_sm0), .in_sm1(pe18_in_sm1),.in_tf0(pe18_in_tf0), .in_tf1(pe18_in_tf1), .out_sm0(pe18_out_sm0), .out_sm1(pe18_out_sm1),.out_tf0(pe18_out_tf0), .out_tf1(pe18_out_tf1), .rd_tf0_output(pe18_output_tf0), .rd_tf1_output(pe18_output_tf1), .dec0(pe18_dec0), .dec1(pe18_dec1));
+pe #(19) pe_19(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe19_in_sm0), .in_sm1(pe19_in_sm1),.in_tf0(pe19_in_tf0), .in_tf1(pe19_in_tf1), .out_sm0(pe19_out_sm0), .out_sm1(pe19_out_sm1),.out_tf0(pe19_out_tf0), .out_tf1(pe19_out_tf1), .rd_tf0_output(pe19_output_tf0), .rd_tf1_output(pe19_output_tf1), .dec0(pe19_dec0), .dec1(pe19_dec1));
+pe #(20) pe_20(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe20_in_sm0), .in_sm1(pe20_in_sm1),.in_tf0(pe20_in_tf0), .in_tf1(pe20_in_tf1), .out_sm0(pe20_out_sm0), .out_sm1(pe20_out_sm1),.out_tf0(pe20_out_tf0), .out_tf1(pe20_out_tf1), .rd_tf0_output(pe20_output_tf0), .rd_tf1_output(pe20_output_tf1), .dec0(pe20_dec0), .dec1(pe20_dec1));
+pe #(21) pe_21(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe21_in_sm0), .in_sm1(pe21_in_sm1),.in_tf0(pe21_in_tf0), .in_tf1(pe21_in_tf1), .out_sm0(pe21_out_sm0), .out_sm1(pe21_out_sm1),.out_tf0(pe21_out_tf0), .out_tf1(pe21_out_tf1), .rd_tf0_output(pe21_output_tf0), .rd_tf1_output(pe21_output_tf1), .dec0(pe21_dec0), .dec1(pe21_dec1));
+pe #(22) pe_22(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe22_in_sm0), .in_sm1(pe22_in_sm1),.in_tf0(pe22_in_tf0), .in_tf1(pe22_in_tf1), .out_sm0(pe22_out_sm0), .out_sm1(pe22_out_sm1),.out_tf0(pe22_out_tf0), .out_tf1(pe22_out_tf1), .rd_tf0_output(pe22_output_tf0), .rd_tf1_output(pe22_output_tf1), .dec0(pe22_dec0), .dec1(pe22_dec1));
+pe #(23) pe_23(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe23_in_sm0), .in_sm1(pe23_in_sm1),.in_tf0(pe23_in_tf0), .in_tf1(pe23_in_tf1), .out_sm0(pe23_out_sm0), .out_sm1(pe23_out_sm1),.out_tf0(pe23_out_tf0), .out_tf1(pe23_out_tf1), .rd_tf0_output(pe23_output_tf0), .rd_tf1_output(pe23_output_tf1), .dec0(pe23_dec0), .dec1(pe23_dec1));
+pe #(24) pe_24(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe24_in_sm0), .in_sm1(pe24_in_sm1),.in_tf0(pe24_in_tf0), .in_tf1(pe24_in_tf1), .out_sm0(pe24_out_sm0), .out_sm1(pe24_out_sm1),.out_tf0(pe24_out_tf0), .out_tf1(pe24_out_tf1), .rd_tf0_output(pe24_output_tf0), .rd_tf1_output(pe24_output_tf1), .dec0(pe24_dec0), .dec1(pe24_dec1));
+pe #(25) pe_25(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe25_in_sm0), .in_sm1(pe25_in_sm1),.in_tf0(pe25_in_tf0), .in_tf1(pe25_in_tf1), .out_sm0(pe25_out_sm0), .out_sm1(pe25_out_sm1),.out_tf0(pe25_out_tf0), .out_tf1(pe25_out_tf1), .rd_tf0_output(pe25_output_tf0), .rd_tf1_output(pe25_output_tf1), .dec0(pe25_dec0), .dec1(pe25_dec1));
+pe #(26) pe_26(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe26_in_sm0), .in_sm1(pe26_in_sm1),.in_tf0(pe26_in_tf0), .in_tf1(pe26_in_tf1), .out_sm0(pe26_out_sm0), .out_sm1(pe26_out_sm1),.out_tf0(pe26_out_tf0), .out_tf1(pe26_out_tf1), .rd_tf0_output(pe26_output_tf0), .rd_tf1_output(pe26_output_tf1), .dec0(pe26_dec0), .dec1(pe26_dec1));
+pe #(27) pe_27(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe27_in_sm0), .in_sm1(pe27_in_sm1),.in_tf0(pe27_in_tf0), .in_tf1(pe27_in_tf1), .out_sm0(pe27_out_sm0), .out_sm1(pe27_out_sm1),.out_tf0(pe27_out_tf0), .out_tf1(pe27_out_tf1), .rd_tf0_output(pe27_output_tf0), .rd_tf1_output(pe27_output_tf1), .dec0(pe27_dec0), .dec1(pe27_dec1));
+pe #(28) pe_28(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe28_in_sm0), .in_sm1(pe28_in_sm1),.in_tf0(pe28_in_tf0), .in_tf1(pe28_in_tf1), .out_sm0(pe28_out_sm0), .out_sm1(pe28_out_sm1),.out_tf0(pe28_out_tf0), .out_tf1(pe28_out_tf1), .rd_tf0_output(pe28_output_tf0), .rd_tf1_output(pe28_output_tf1), .dec0(pe28_dec0), .dec1(pe28_dec1));
+pe #(29) pe_29(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe29_in_sm0), .in_sm1(pe29_in_sm1),.in_tf0(pe29_in_tf0), .in_tf1(pe29_in_tf1), .out_sm0(pe29_out_sm0), .out_sm1(pe29_out_sm1),.out_tf0(pe29_out_tf0), .out_tf1(pe29_out_tf1), .rd_tf0_output(pe29_output_tf0), .rd_tf1_output(pe29_output_tf1), .dec0(pe29_dec0), .dec1(pe29_dec1));
+pe #(30) pe_30(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe30_in_sm0), .in_sm1(pe30_in_sm1),.in_tf0(pe30_in_tf0), .in_tf1(pe30_in_tf1), .out_sm0(pe30_out_sm0), .out_sm1(pe30_out_sm1),.out_tf0(pe30_out_tf0), .out_tf1(pe30_out_tf1), .rd_tf0_output(pe30_output_tf0), .rd_tf1_output(pe30_output_tf1), .dec0(pe30_dec0), .dec1(pe30_dec1));
+pe #(31) pe_31(.mclk(mclk), .rst(rst), .rst_tf(rst_tf), .valid(valid), .symbol0(symbol0), .symbol1(symbol1), .pattern(pattern), .in_sm0(pe31_in_sm0), .in_sm1(pe31_in_sm1),.in_tf0(pe31_in_tf0), .in_tf1(pe31_in_tf1), .out_sm0(pe31_out_sm0), .out_sm1(pe31_out_sm1),.out_tf0(pe31_out_tf0), .out_tf1(pe31_out_tf1), .rd_tf0_output(pe31_output_tf0), .rd_tf1_output(pe31_output_tf1), .dec0(pe31_dec0), .dec1(pe31_dec1));
 
-pe #(1) pe_1(.mclk(mclk), .rst(rst), .slice(slice), .valid(valid_slice), .shift_cnt(shift_cnt), .adr0_shift(adr0_shift), .adr1_shift(adr1_shift), .symbol0(reg_symbol0), .symbol1(reg_symbol1), .pattern(reg_pattern), .in_sm0(pe1_in_sm0), .in_sm1(pe1_in_sm1), .out_sm0(pe1_out_sm0), .out_sm1(pe1_out_sm1), .dec0(pe1_dec0), .dec1(pe1_dec1));
-pe #(2) pe_2(.mclk(mclk), .rst(rst), .slice(slice), .valid(valid_slice), .shift_cnt(shift_cnt), .adr0_shift(adr0_shift), .adr1_shift(adr1_shift), .symbol0(reg_symbol0), .symbol1(reg_symbol1), .pattern(reg_pattern), .in_sm0(pe2_in_sm0), .in_sm1(pe2_in_sm1), .out_sm0(pe2_out_sm0), .out_sm1(pe2_out_sm1), .dec0(pe2_dec0), .dec1(pe2_dec1));
-pe #(3) pe_3(.mclk(mclk), .rst(rst), .slice(slice), .valid(valid_slice), .shift_cnt(shift_cnt), .adr0_shift(adr0_shift), .adr1_shift(adr1_shift), .symbol0(reg_symbol0), .symbol1(reg_symbol1), .pattern(reg_pattern), .in_sm0(pe3_in_sm0), .in_sm1(pe3_in_sm1), .out_sm0(pe3_out_sm0), .out_sm1(pe3_out_sm1), .dec0(pe3_dec0), .dec1(pe3_dec1));
-pe #(4) pe_4(.mclk(mclk), .rst(rst), .slice(slice), .valid(valid_slice), .shift_cnt(shift_cnt), .adr0_shift(adr0_shift), .adr1_shift(adr1_shift), .symbol0(reg_symbol0), .symbol1(reg_symbol1), .pattern(reg_pattern), .in_sm0(pe4_in_sm0), .in_sm1(pe4_in_sm1), .out_sm0(pe4_out_sm0), .out_sm1(pe4_out_sm1), .dec0(pe4_dec0), .dec1(pe4_dec1));
-pe #(5) pe_5(.mclk(mclk), .rst(rst), .slice(slice), .valid(valid_slice), .shift_cnt(shift_cnt), .adr0_shift(adr0_shift), .adr1_shift(adr1_shift), .symbol0(reg_symbol0), .symbol1(reg_symbol1), .pattern(reg_pattern), .in_sm0(pe5_in_sm0), .in_sm1(pe5_in_sm1), .out_sm0(pe5_out_sm0), .out_sm1(pe5_out_sm1), .dec0(pe5_dec0), .dec1(pe5_dec1));
-pe #(6) pe_6(.mclk(mclk), .rst(rst), .slice(slice), .valid(valid_slice), .shift_cnt(shift_cnt), .adr0_shift(adr0_shift), .adr1_shift(adr1_shift), .symbol0(reg_symbol0), .symbol1(reg_symbol1), .pattern(reg_pattern), .in_sm0(pe6_in_sm0), .in_sm1(pe6_in_sm1), .out_sm0(pe6_out_sm0), .out_sm1(pe6_out_sm1), .dec0(pe6_dec0), .dec1(pe6_dec1));
-pe #(7) pe_7(.mclk(mclk), .rst(rst), .slice(slice), .valid(valid_slice), .shift_cnt(shift_cnt), .adr0_shift(adr0_shift), .adr1_shift(adr1_shift), .symbol0(reg_symbol0), .symbol1(reg_symbol1), .pattern(reg_pattern), .in_sm0(pe7_in_sm0), .in_sm1(pe7_in_sm1), .out_sm0(pe7_out_sm0), .out_sm1(pe7_out_sm1), .dec0(pe7_dec0), .dec1(pe7_dec1));
-pe #(8) pe_8(.mclk(mclk), .rst(rst), .slice(slice), .valid(valid_slice), .shift_cnt(shift_cnt), .adr0_shift(adr0_shift), .adr1_shift(adr1_shift), .symbol0(reg_symbol0), .symbol1(reg_symbol1), .pattern(reg_pattern), .in_sm0(pe8_in_sm0), .in_sm1(pe8_in_sm1), .out_sm0(pe8_out_sm0), .out_sm1(pe8_out_sm1), .dec0(pe8_dec0), .dec1(pe8_dec1));
-pe #(9) pe_9(.mclk(mclk), .rst(rst), .slice(slice), .valid(valid_slice), .shift_cnt(shift_cnt), .adr0_shift(adr0_shift), .adr1_shift(adr1_shift), .symbol0(reg_symbol0), .symbol1(reg_symbol1), .pattern(reg_pattern), .in_sm0(pe9_in_sm0), .in_sm1(pe9_in_sm1), .out_sm0(pe9_out_sm0), .out_sm1(pe9_out_sm1), .dec0(pe9_dec0), .dec1(pe9_dec1));
-pe #(10) pe_10(.mclk(mclk), .rst(rst), .slice(slice), .valid(valid_slice), .shift_cnt(shift_cnt), .adr0_shift(adr0_shift), .adr1_shift(adr1_shift), .symbol0(reg_symbol0), .symbol1(reg_symbol1), .pattern(reg_pattern), .in_sm0(pe10_in_sm0), .in_sm1(pe10_in_sm1), .out_sm0(pe10_out_sm0), .out_sm1(pe10_out_sm1), .dec0(pe10_dec0), .dec1(pe10_dec1));
-pe #(11) pe_11(.mclk(mclk), .rst(rst), .slice(slice), .valid(valid_slice), .shift_cnt(shift_cnt), .adr0_shift(adr0_shift), .adr1_shift(adr1_shift), .symbol0(reg_symbol0), .symbol1(reg_symbol1), .pattern(reg_pattern), .in_sm0(pe11_in_sm0), .in_sm1(pe11_in_sm1), .out_sm0(pe11_out_sm0), .out_sm1(pe11_out_sm1), .dec0(pe11_dec0), .dec1(pe11_dec1));
-pe #(12) pe_12(.mclk(mclk), .rst(rst), .slice(slice), .valid(valid_slice), .shift_cnt(shift_cnt), .adr0_shift(adr0_shift), .adr1_shift(adr1_shift), .symbol0(reg_symbol0), .symbol1(reg_symbol1), .pattern(reg_pattern), .in_sm0(pe12_in_sm0), .in_sm1(pe12_in_sm1), .out_sm0(pe12_out_sm0), .out_sm1(pe12_out_sm1), .dec0(pe12_dec0), .dec1(pe12_dec1));
-pe #(13) pe_13(.mclk(mclk), .rst(rst), .slice(slice), .valid(valid_slice), .shift_cnt(shift_cnt), .adr0_shift(adr0_shift), .adr1_shift(adr1_shift), .symbol0(reg_symbol0), .symbol1(reg_symbol1), .pattern(reg_pattern), .in_sm0(pe13_in_sm0), .in_sm1(pe13_in_sm1), .out_sm0(pe13_out_sm0), .out_sm1(pe13_out_sm1), .dec0(pe13_dec0), .dec1(pe13_dec1));
-pe #(14) pe_14(.mclk(mclk), .rst(rst), .slice(slice), .valid(valid_slice), .shift_cnt(shift_cnt), .adr0_shift(adr0_shift), .adr1_shift(adr1_shift), .symbol0(reg_symbol0), .symbol1(reg_symbol1), .pattern(reg_pattern), .in_sm0(pe14_in_sm0), .in_sm1(pe14_in_sm1), .out_sm0(pe14_out_sm0), .out_sm1(pe14_out_sm1), .dec0(pe14_dec0), .dec1(pe14_dec1));
-pe #(15) pe_15(.mclk(mclk), .rst(rst), .slice(slice), .valid(valid_slice), .shift_cnt(shift_cnt), .adr0_shift(adr0_shift), .adr1_shift(adr1_shift), .symbol0(reg_symbol0), .symbol1(reg_symbol1), .pattern(reg_pattern), .in_sm0(pe15_in_sm0), .in_sm1(pe15_in_sm1), .out_sm0(pe15_out_sm0), .out_sm1(pe15_out_sm1), .dec0(pe15_dec0), .dec1(pe15_dec1));		
-ctrl ctrl_i
-(
-    .mclk(mclk), 
-    .rst(rst), 
-    .valid(valid), 
-    .symbol0(symbol0), 
-    .symbol1(symbol1), 
-    .pattern(pattern), 
-    .valid_slice(valid_slice), 
-    .slice(slice), 
-    .shift_cnt(shift_cnt), 
-    .adr0_shift(adr0_shift), 
-    .adr1_shift(adr1_shift), 
-    .reg_symbol0(reg_symbol0), 
-    .reg_symbol1(reg_symbol1), 
-    .reg_pattern(reg_pattern), 
-    .valid_decs(valid_decs)
-);
+ 
+
 
 // always @(posedge mclk)
 // begin

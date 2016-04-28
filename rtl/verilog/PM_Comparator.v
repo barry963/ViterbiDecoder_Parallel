@@ -149,32 +149,60 @@ endmodule
 
 // Compare 8 bytes at a time
 module SelectMiniPM (
-    input wire [255:0] array,   // 32*8 byte array
+    input wire [511:0] array,   // 64*8 byte array
 	input wire [`U-1:0] slice,
-	//input wire [159:0] index,   // 32*5 byte array
 	input wire en_comp_in,
     output wire [5:0] indexG,
     output wire [7:0] valueG
     );
 	
-	//always @(en_comp_in) begin
+	//always @(*) begin
 	//if(en_comp_in)
 		//begin
-			wire [7:0] value_l1[15:0];
-			wire [5:0] index_l1[15:0];
-
+	//if(en_comp_in)
+		//begin
+			
+			wire [5:0] index_list[63:0];//='{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31};
+			
 			genvar i;
 			generate
+			for (i=0;i<64;i=i+1) begin :gen_comps_l00
+				assign index_list[i]=63-i;
+					
+			end
+			endgenerate
+
+			wire [7:0] value_l0[31:0];
+			wire [5:0] index_l0[31:0];
+			generate
+			for (i=0;i<64;i=i+2) begin :gen_comps_l0
+
+				PMComparator cl0 (.en_comp_in(en_comp_in),
+				.X1(array[(i<<3)+:8]),
+						 .indexX1(index_list[i]),
+						 .X2(array[((i+1)<<3)+:8]),
+						 .indexX2(index_list[i+1]),
+						 .Y(value_l0[i>>1]),
+						 .indexY(index_l0[i>>1])
+						);
+					
+			end
+			endgenerate
+			
+			wire [7:0] value_l1[15:0];
+			wire [5:0] index_l1[15:0];
+			generate
 			for (i=0;i<32;i=i+2) begin :gen_comps_l1
-				PMComparator cl1 (en_comp_in,
-						 array[(i<<3)+:8],
+
+				PMComparator cl1 (.en_comp_in(en_comp_in),
+				.X1(value_l0[i]),
 						 //index[i*5+4:i*5],
-						 i,
-						 array[((i+1)<<3)+:8],
+						 .indexX1(index_l0[i]),
+						 .X2(value_l0[i+1]),
 						 //index[(i+1)*5+4:(i+1)*5],
-						 (i+1),
-						 value_l1[i>>1],
-						 index_l1[i>>1]
+						 .indexX2(index_l0[i+1]),
+						 .Y(value_l1[i>>1]),
+						 .indexY(index_l1[i>>1])
 						);
 					
 			end
@@ -185,13 +213,13 @@ module SelectMiniPM (
 
 			generate
 			for (i=0;i<16;i=i+2) begin :gen_comps_l2
-				PMComparator cl2 (en_comp_in,
-				value_l1[i],
-						 index_l1[i],
-						 value_l1[i+1],
-						 index_l1[i+1],
-						 value_l2[i>>1],
-						 index_l2[i>>1]
+				PMComparator cl2 (.en_comp_in(en_comp_in),
+				.X1(value_l1[i]),
+						 .indexX1(index_l1[i]),
+						 .X2(value_l1[i+1]),
+						 .indexX2(index_l1[i+1]),
+						 .Y(value_l2[i>>1]),
+						 .indexY(index_l2[i>>1])
 						);
 			end
 			endgenerate
@@ -201,13 +229,13 @@ module SelectMiniPM (
 
 			generate
 			for (i=0;i<8;i=i+2) begin :gen_comps_l3
-				PMComparator cl3 (en_comp_in,
-				value_l2[i],
-						 index_l2[i],
-						 value_l2[i+1],
-						 index_l2[i+1],
-						 value_l3[i>>1],
-						 index_l3[i>>1]
+				PMComparator cl3 (.en_comp_in(en_comp_in),
+				.X1(value_l2[i]),
+						 .indexX1(index_l2[i]),
+						 .X2(value_l2[i+1]),
+						 .indexX2(index_l2[i+1]),
+						 .Y(value_l3[i>>1]),
+						 .indexY(index_l3[i>>1])
 						);
 			end
 			endgenerate
@@ -217,13 +245,13 @@ module SelectMiniPM (
 
 			generate
 			for (i=0;i<4;i=i+2) begin :gen_comps_l4
-				PMComparator cl4 (en_comp_in,
-				value_l3[i],
-						 index_l3[i],
-						 value_l3[i+1],
-						 index_l3[i+1],
-						 value_l4[i>>1],
-						 index_l4[i>>1]
+				PMComparator cl4 (.en_comp_in(en_comp_in),
+				.X1(value_l3[i]),
+						 .indexX1(index_l3[i]),
+						 .X2(value_l3[i+1]),
+						 .indexX2(index_l3[i+1]),
+						 .Y(value_l4[i>>1]),
+						 .indexY(index_l4[i>>1])
 						);
 			end
 			endgenerate
@@ -232,19 +260,20 @@ module SelectMiniPM (
 
 			generate
 			for (i=0;i<2;i=i+2) begin :gen_comps_l5
-				PMComparator cl5 (en_comp_in,
-				value_l4[i],
-						 index_l4[i],
-						 value_l4[i+1],
-						 index_l4[i+1],
-						 value_l5[i>>1],
-						 index_l5[i>>1]
+				PMComparator cl5 (.en_comp_in(en_comp_in),
+				.X1(value_l4[i]),
+						 .indexX1(index_l4[i]),
+						 .X2(value_l4[i+1]),
+						 .indexX2(index_l4[i+1]),
+						 .Y(value_l5[i>>1]),
+						 .indexY(index_l5[i>>1])
 						);
 			end
 			endgenerate	
 			
+			
 			//assign indexG = (slice==`U'd0)?((index_l5[0]<16)?(15-index_l5[0]):(63-index_l5[0])):((index_l5[0]<16)?(31-index_l5[0]):(79-index_l5[0]));
-			assign indexG = (slice==`U'd0)?(31-index_l5[0]):(63-index_l5[0]);
+			assign indexG = index_l5[0];
 			//assign indexG = (slice==`U'd0)?(31-index_l5[0]):(index_l5[0]);
 			//assign indexG = 63-index_l5[0];
 			//assign indexG = (index_l5[0]<16)?(31-index_l5[0]):(79-index_l5[0]);

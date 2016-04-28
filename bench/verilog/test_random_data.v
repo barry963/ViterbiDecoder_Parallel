@@ -33,12 +33,12 @@
 
 // number of clock cycles used to process input symbols before next symbols can be
 // sent to the decoder (= 2^u).
-`define SLICE_NUM           2
+`define SLICE_NUM           1
 
 // traceback depth used to bound the decoder delay
 `define OUT_NUM             64
 
-// the simulation cycle time of clock 1->500M 10->50M 
+// the simulation cycle time of clock 1->500M 50->10M 10->50M
 `define CLK_TIME            10
 
 // simulation end command

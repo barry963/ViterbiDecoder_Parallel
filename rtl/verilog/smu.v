@@ -17,85 +17,69 @@
 
 `include "glb_def.v"
 
-`define PE_SM_NUM 4                // 2^(`U+`V)
-`define MAX_SLICE 2                // 2^(`U)
+`define MAX_SLICE 1                // 2^(`U)
 
 // just for test, not support state-set division.   
 module smu
 (
 	mclk, 
-	rst, 
+	rst,
+	rst_tf,	
 	valid, 
-	shift_cnt, 
-	adr0_shift, adr1_shift, wr_sm0, wr_sm1, rd_sm0, rd_sm1);
+	wr_sm0, wr_sm1, 
+	wr_tf0, wr_tf1,
+	rd_sm0, rd_sm1,
+	rd_tf0, rd_tf1,
+	rd_tf0_output, rd_tf1_output
+);
 
-input mclk, rst, valid;
-input[`V-1:0] shift_cnt;      ///////// 
-input[`U-1:0] adr0_shift, adr1_shift;             /////////////////////////////
+input mclk, rst, rst_tf, valid;
 input[`SM_Width-1:0] wr_sm0, wr_sm1;
+input[`W+`V+`U-1:0] wr_tf0, wr_tf1;
 output[`SM_Width-1:0] rd_sm0, rd_sm1;
+output[`W+`V+`U-1:0] rd_tf0, rd_tf1;
+output [`W+`V+`U-1:0] rd_tf0_output, rd_tf1_output;
 
-reg[`SM_Width-1:0] regfbank0[`MAX_SLICE-1:0], regfbank1[`MAX_SLICE-1:0];
 reg[`SM_Width-1:0] rd_sm0, rd_sm1;   ///////////////////////////////////////
-reg[`SM_Width-1:0] wr_sm0_shift, wr_sm1_shift;
-wire[`SM_Width-1:0] rd_sm0_shift, rd_sm1_shift;
 
+reg[`W+`V+`U-1:0] rd_tf0, rd_tf1;
+
+reg[`W+`V+`U-1:0] rd_tf0_output, rd_tf1_output;
 
 integer i;
-
-// for using banks in SMU, we should shift up the read state-metrics order by barriel shift
-always @(shift_cnt or rd_sm0_shift or rd_sm1_shift)
-begin
-    case(shift_cnt)
-	0:
-		begin
-			rd_sm0=rd_sm0_shift;
-			rd_sm1=rd_sm1_shift;
-		end
-	1:
-		begin
-			rd_sm0=rd_sm1_shift;
-			rd_sm1=rd_sm0_shift;
-		end
-	default:;
-    endcase
-end
-// for using banks in SMU, we should shift down the write state-metrics order by barriel shift
-always @(shift_cnt or wr_sm0 or wr_sm1)
-begin
-    case(shift_cnt)
-	0:
-		begin
-			wr_sm0_shift=wr_sm0;
-			wr_sm1_shift=wr_sm1;
-		end
-	1:
-		begin
-			wr_sm0_shift=wr_sm1;
-			wr_sm1_shift=wr_sm0;
-		end
-	default:;
-    endcase
-end
-
+parameter PE_ID=0;
 
 always @(posedge mclk or posedge rst)
 begin
     if(rst)
     begin
-        for(i=0;i<`MAX_SLICE;i=i+1)
-			begin
-				regfbank0[i]<='b0;
-				regfbank1[i]<='b0;    
-			end
-		end
+		rd_sm0<='b0;
+		rd_sm1<='b0;
+		
+		rd_tf0<='b0;
+		rd_tf1<='b0;					
+	end	
     else if(valid)
 		begin
-			regfbank0[adr0_shift]<=wr_sm0_shift;		//////////////////
-			regfbank1[adr1_shift]<=wr_sm1_shift;		//////////////////
-		end
+			rd_sm0<=wr_sm0;
+			rd_sm1<=wr_sm1;
+			if(rst_tf)
+				begin
+					rd_tf0<=PE_ID;
+					rd_tf1<=PE_ID+32;
+						
+					rd_tf0_output<=wr_tf0;
+					rd_tf1_output<=wr_tf1;					
+				end
+			else
+				begin
+					rd_tf0<=wr_tf0;
+					rd_tf1<=wr_tf1;			
+				end
+				
+			
+		end	
+		
 end
-assign rd_sm0_shift = regfbank0[adr0_shift];  ////////////////////////////
-assign rd_sm1_shift = regfbank1[adr1_shift];  ////////////////////////////
 
 endmodule
